@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -39,54 +40,32 @@ class home_page extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           Image(image: AssetImage('assets/earth.png'),),
-          Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Center(
-                      child: ElevatedButton(
-                        child: const Text('Map search'),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => MapSample()),);
-                          // Navigate to second route when tapped.
-                        },
-                      ),
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        child: const Text('button 2'),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const thirdRoute()),);
-                          // Navigate to second route when tapped.
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Center(
-                      child: ElevatedButton(
-                        child: const Text('button 3'),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const fourthRoute()),);
-                          // Navigate to second route when tapped.
-                        },
-                      ),
-                    ),
-                    Center(
-                      child: ElevatedButton(
-                        child: const Text('About us'),
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => const aboutUs_page()),);
-                          // Navigate to second route when tapped.
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-              ]
+          Center(
+            child: ElevatedButton(
+              child: const Text('Map search'),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MapSample()),);
+                // Navigate to second route when tapped.
+              },
+            ),
+          ),
+          Center(
+            child: ElevatedButton(
+              child: const Text('HowToUse'),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const HowToUse()),);
+                // Navigate to second route when tapped.
+              },
+            ),
+          ),
+          Center(
+            child: ElevatedButton(
+              child: const Text('About us'),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const aboutUs_page()),);
+                // Navigate to second route when tapped.
+              },
+            ),
           ),
         ],
       ),
@@ -102,34 +81,40 @@ class MapSample extends StatefulWidget {
 class MapSampleState extends State<MapSample> {
   Completer<GoogleMapController> _controller = Completer();
   TextEditingController _searchController = TextEditingController();
-  static final CameraPosition _kGooglePlex = CameraPosition(
+  static final CameraPosition _kinit = CameraPosition(
     target: LatLng(13.7563, 100.5018),
     zoom: 14.4746,
   );
 
   Set<Marker> _markers = Set<Marker>();
-
+  Map<int, Marker> markers = <int, Marker>{};
+  var markerid = 0;
+  List<String> strPlace = <String>[];
+  String temp = 'Bangkok';
   @override
   void initState(){
     super.initState();
 
     _setMarker(LatLng(13.7563, 100.5018));
+    
   }
 
   void _setMarker(LatLng point){
+    // print(markerid.toString());
     setState(() {
       _markers.add(
         Marker(
-            markerId: MarkerId('marker'),
+            markerId: MarkerId(markerid.toString()),
             position: point
         ),
       );
     });
+    markers.addAll({markerid:_markers.elementAt(markerid)});
   }
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       appBar: AppBar(title: Text('Google map'),),
       body: Column(
         children: [
@@ -139,12 +124,14 @@ class MapSampleState extends State<MapSample> {
                 controller: _searchController,
                 textCapitalization: TextCapitalization.words,
                 decoration: InputDecoration(hintText: 'Search by City'),
-                onChanged: (value){
-                  print('valure: '+value);
-                },
-              )),
+                // onChanged: (value){
+                //   // print('valure: '+value);
+                // },
+              ),
+              ),
               IconButton(
                   onPressed: () async {
+                    temp = _searchController.text;
                     var place = await LocationService().getPlace(_searchController.text);
                     _goToPlace(place);
                   },
@@ -156,13 +143,32 @@ class MapSampleState extends State<MapSample> {
             child: GoogleMap(
               mapType: MapType.normal,
               markers: _markers,
-              initialCameraPosition: _kGooglePlex,
+              initialCameraPosition: _kinit,
               onMapCreated: (GoogleMapController controller) {
                 _controller.complete(controller);
               },
             ),
           ),
         ],
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 100.0),
+        child: FloatingActionButton.extended(
+          onPressed: () {
+            strPlace.add(temp);
+            Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => savedPlace(markers: markers, strPlace: strPlace,),
+              // Pass the arguments as part of the RouteSettings. The
+              // DetailScreen reads the arguments from these settings
+            ),
+          );
+          markerid++;
+          },
+          label: Text('Save location'),
+          icon: Icon(Icons.pin_drop_rounded),
+    ),
       ),
     );
   }
@@ -180,48 +186,47 @@ class MapSampleState extends State<MapSample> {
   }
 }
 
-class thirdRoute extends StatelessWidget {
-  const thirdRoute({Key? key}) : super(key: key);
+class savedPlace extends StatelessWidget {
+
+  final Map<int, Marker> markers;
+  final List<String> strPlace;
+
+  savedPlace({Key? key, required this.markers, required this.strPlace}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Page'),
+        title: const Text('Saved Place'),
       ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("New data is coming soon..."),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate back to first route when tapped.
-              },
-              child: const Text('Go back!'),
-            ),
-          ),
-        ],
+      body: ListView.builder(
+        itemCount: markers.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            leading: Icon(Icons.place),
+            title: Text('Lo id '+index.toString()+' '+strPlace[index]),
+            subtitle: Text('Latitude: '+markers[index]!.position.latitude.toString()+' Longtitude: '+markers[index]!.position.longitude.toString()),
+          );
+        },
       ),
     );
   }
 }
 
-class fourthRoute extends StatelessWidget {
-  const fourthRoute({Key? key}) : super(key: key);
+class HowToUse extends StatelessWidget {
+  const HowToUse({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Third Page'),
+        title: const Text('HowToUse'),
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("New data is coming soon..."),
-
+          const Text("Search by City"),
+          Text('This will allow you to search by city.'),
+          Image(image: AssetImage('assets/htu1')),
           Center(
             child: ElevatedButton(
               onPressed: () {
