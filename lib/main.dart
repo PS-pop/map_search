@@ -156,6 +156,7 @@ class MapSampleState extends State<MapSample> {
         child: FloatingActionButton.extended(
           onPressed: () {
             strPlace.add(temp);
+            print(strPlace);
             Navigator.push(
             context,
             MaterialPageRoute(
@@ -204,7 +205,7 @@ class savedPlace extends StatelessWidget {
         itemBuilder: (context, index) {
           return ListTile(
             leading: Icon(Icons.place),
-            title: Text('Lo id '+index.toString()+' '+strPlace[index]),
+            title: Text('Loc id '+index.toString()+' '+strPlace[index]),
             subtitle: Text('Latitude: '+markers[index]!.position.latitude.toString()+' Longtitude: '+markers[index]!.position.longitude.toString()),
           );
         },
@@ -222,21 +223,17 @@ class HowToUse extends StatelessWidget {
       appBar: AppBar(
         title: const Text('HowToUse'),
       ),
-      body: Column(
-        children: [
-          const Text("Search by City"),
-          Text('This will allow you to search by city.'),
-          Image(image: AssetImage('assets/htu1')),
-          Center(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Navigate back to first route when tapped.
-              },
-              child: const Text('Go back!'),
-            ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Center(
+          child: Column(
+            children: [
+              const Text("Search by City"),
+              Text('This will allow you to search by city.'),
+              Image(image: AssetImage('assets/htu1.PNG')),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -283,7 +280,7 @@ class aboutUs_page extends StatelessWidget {
               child: const Text('Go back!'),
             ),
           ),
-          const Text("New data is coming soon..."),
+          // const Text("New data is coming soon..."),
         ],
       ),
     );
