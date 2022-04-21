@@ -22,6 +22,7 @@ class MapSampleState extends State<MapSample> {
   var markerid = 0;
   List<String> strPlace = <String>[];
   String temp = 'Bangkok';
+
   @override
   void initState(){
     super.initState();
@@ -36,7 +37,11 @@ class MapSampleState extends State<MapSample> {
       _markers.add(
         Marker(
             markerId: MarkerId(markerid.toString()),
-            position: point
+            position: point,
+            infoWindow: InfoWindow(
+                title: temp,
+                snippet: 'Latitude: '+point.latitude.toString()+' Longtitude: '+point.longitude.toString()
+            ),
         ),
       );
     });

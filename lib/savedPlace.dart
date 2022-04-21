@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:map_search/showSavedPlace.dart';
 
 class savedPlace extends StatelessWidget {
 
@@ -21,6 +22,10 @@ class savedPlace extends StatelessWidget {
             leading: Icon(Icons.place),
             title: Text('Loc id '+index.toString()+' '+strPlace[index]),
             subtitle: Text('Latitude: '+markers[index]!.position.latitude.toString()+' Longtitude: '+markers[index]!.position.longitude.toString()),
+            onTap: () {
+              Navigator.push(context, MaterialPageRoute(builder: (context) => showSavedPlace(marker: markers[index]!, strPlace: strPlace[index],)),);
+              // Navigate to second route when tapped.
+            },
           );
         },
       ),
