@@ -18,6 +18,7 @@ class MapSampleState extends State<MapSample> {
   );
 
   Set<Marker> _markers = Set<Marker>();
+
   Map<int, Marker> markers = <int, Marker>{};
   var markerid = 0;
   List<String> strPlace = <String>[];
@@ -26,9 +27,7 @@ class MapSampleState extends State<MapSample> {
   @override
   void initState(){
     super.initState();
-
     _setMarker(LatLng(13.7563, 100.5018));
-
   }
 
   void _setMarker(LatLng point){
@@ -45,7 +44,9 @@ class MapSampleState extends State<MapSample> {
         ),
       );
     });
+
     markers.addAll({markerid:_markers.elementAt(markerid)});
+    print(markers);
   }
 
   @override
@@ -61,14 +62,14 @@ class MapSampleState extends State<MapSample> {
                 textCapitalization: TextCapitalization.words,
                 decoration: InputDecoration(hintText: 'Search by City'),
                 // onChanged: (value){
-                //   // print('valure: '+value);
+                //   print(value);
                 // },
               ),
               ),
               IconButton(
                   onPressed: () async {
                     temp = _searchController.text;
-                    var place = await LocationService().getPlace(_searchController.text);
+                    var place = await LocationService().getPlace(temp);
                     _goToPlace(place);
                   },
                   icon: Icon(Icons.search)
@@ -98,8 +99,6 @@ class MapSampleState extends State<MapSample> {
               context,
               MaterialPageRoute(
                 builder: (context) => savedPlace(markers: markers, strPlace: strPlace,),
-                // Pass the arguments as part of the RouteSettings. The
-                // DetailScreen reads the arguments from these settings
               ),
             );
             markerid++;

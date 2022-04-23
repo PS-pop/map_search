@@ -22,7 +22,7 @@ class MapSampleState extends State<showSavedPlace> {
     final String strPlace = widget.strPlace;
 
     return Scaffold(
-      appBar: AppBar(title: Text(widget.strPlace),),
+      appBar: AppBar(title: Text(strPlace),),
       body: GoogleMap(
         // myLocationEnabled: true,
         mapType: MapType.normal,
