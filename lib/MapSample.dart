@@ -46,7 +46,7 @@ class MapSampleState extends State<MapSample> {
     });
 
     markers.addAll({markerid:_markers.elementAt(markerid)});
-    print(markers);
+    // print(markers);
   }
 
   @override
@@ -79,6 +79,7 @@ class MapSampleState extends State<MapSample> {
           Expanded(
             child: GoogleMap(
               myLocationEnabled: true,
+              myLocationButtonEnabled: true,
               mapType: MapType.normal,
               markers: _markers,
               initialCameraPosition: _kinit,
@@ -93,15 +94,30 @@ class MapSampleState extends State<MapSample> {
         padding: const EdgeInsets.only(right: 100.0),
         child: FloatingActionButton.extended(
           onPressed: () {
-            strPlace.add(temp);
+            bool check = true;
+            for (int i = 0;i<strPlace.length;i++) {
+              if (temp == strPlace[i]){
+                check = false;
+                break;
+              }
+            }
+            if(check){
+              strPlace.add(temp);
+              markerid++;
+            }
             print(strPlace);
+            // for (int i = 0;i<markers.length;i++){
+            //   print(markers[i]);
+            // }
+            print(markers.length);
+            print(markerid);
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => savedPlace(markers: markers, strPlace: strPlace,),
               ),
             );
-            markerid++;
+            // markerid++;
           },
           label: Text('Save location'),
           icon: Icon(Icons.pin_drop_rounded),
